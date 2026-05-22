@@ -1,0 +1,43 @@
+<% const pageTitle = 'Xác minh mã nhân viên'; %>
+<%- include('../partials/header') %>
+
+<section class="page-header">
+  <div class="container">
+    <h1 class="page-title">Xác Minh Mã Nhân Viên</h1>
+    <p class="page-subtitle">Dành cho bộ phận nhân sự và đối tác nội bộ</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:480px">
+    <% if (verifiedMsg) { %>
+      <div class="form-alert form-alert-success" style="margin-bottom:20px"><%= verifiedMsg %></div>
+    <% } %>
+
+    <div class="detail-card">
+      <form method="POST" action="/support/member" class="auth-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label class="form-label" for="code">Mã nhân viên</label>
+          <input type="text" id="code" name="code" class="form-input"
+                 value="<%= code %>" required autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Kiểm tra</button>
+      </form>
+
+      <% if (result) { %>
+        <p class="member-result <%= result.ok ? 'member-result--ok' : 'member-result--no' %>" style="margin-top:20px">
+          <%= result.text %>
+        </p>
+      <% } %>
+    </div>
+
+    <p style="text-align:center;margin-top:20px">
+      <a href="/auth/login" class="form-link">Đăng nhập</a>
+      ·
+      <a href="/" class="form-link">Trang chủ</a>
+    </p>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

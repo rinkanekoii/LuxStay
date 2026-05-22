@@ -1,0 +1,47 @@
+<% const pageTitle = 'Đăng nhập'; %>
+<%- include('../partials/header') %>
+
+<section class="auth-section">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>Đăng Nhập</h1>
+      <p>Cổng truy cập nội bộ LuxStay</p>
+    </div>
+
+    <% if (verifiedMsg) { %>
+      <div class="form-alert form-alert-success"><%= verifiedMsg %></div>
+    <% } %>
+
+    <% if (error) { %>
+      <div class="form-alert form-alert-error"><%= error %></div>
+    <% } %>
+
+    <form action="/auth/login" method="POST" class="auth-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label for="username" class="form-label">Tên đăng nhập</label>
+        <input type="text" id="username" name="username" class="form-input"
+               value="<%= username %>" required autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Mật khẩu</label>
+        <input type="password" id="password" name="password" class="form-input"
+               required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Đăng nhập</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>
+        <a href="/" class="form-link">Trang chủ</a>
+        · <a href="/support/member" class="form-link">Nhân viên</a>
+        · <a href="/contact" class="form-link">Liên hệ</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

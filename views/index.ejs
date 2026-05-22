@@ -1,0 +1,70 @@
+<% const pageTitle = undefined; %>
+<%- include('partials/header') %>
+
+<section class="hero hero--intro">
+  <div class="hero-bg">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">LuxStay Internal</p>
+    <h1 class="hero-title">Lux<span class="text-gradient">Stay</span></h1>
+    <p class="hero-subtitle">
+      Nền tảng nội bộ dành cho đối tác và nhân sự. Vui lòng đăng nhập để tiếp tục.
+    </p>
+    <div class="hero-cta">
+      <% if (user) { %>
+        <span class="hero-welcome">Xin chào, <strong><%= user.full_name || user.username %></strong></span>
+        <a href="/auth/logout" class="btn btn-outline">Đăng xuất</a>
+      <% } else { %>
+        <a href="/auth/login" class="btn btn-primary btn-lg">Đăng nhập</a>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<% if (verifiedMsg) { %>
+<section class="section">
+  <div class="container" style="max-width:560px">
+    <div class="form-alert form-alert-success"><%= verifiedMsg %></div>
+  </div>
+</section>
+<% } %>
+
+<section class="section section-dark">
+  <div class="container">
+    <div class="intro-grid">
+      <article class="intro-card">
+        <div class="intro-icon">🏢</div>
+        <h3>Giới thiệu</h3>
+        <p>LuxStay phát triển giải pháp quản lý lưu trú và trải nghiệm khách hàng cho thị trường Việt Nam.</p>
+      </article>
+      <article class="intro-card">
+        <div class="intro-icon">🔒</div>
+        <h3>Truy cập có kiểm soát</h3>
+        <p>Tài khoản do bộ phận IT cấp. Liên hệ quản trị nếu bạn quên mật khẩu.</p>
+      </article>
+      <article class="intro-card">
+        <div class="intro-icon">📋</div>
+        <h3>Hỗ trợ</h3>
+        <p>Xác minh mã nhân viên hoặc gửi yêu cầu qua mục liên hệ.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card stat-card-gold">
+        <span class="stat-card-icon">👤</span>
+        <div>
+          <span class="stat-card-number"><%= stats.totalUsers %></span>
+          <span class="stat-card-label">Tài khoản hệ thống</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
