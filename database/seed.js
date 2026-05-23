@@ -12,7 +12,7 @@ async function seed() {
   execRaw("DELETE FROM sqlite_sequence WHERE name IN ('users','rooms','bookings','contact_messages')");
 
   const users = [
-    ['admin', 'admin@luxstay.vn', 'Admin@123', 'Nguyễn Quốc Bảo', 'admin', 'LX-ADM-7K2'],
+    ['admin', 'admin@luxstay.vn', 'Admin@123', 'Phạm Văn Quý', 'admin', 'LX-ADM-7K2'],
     ['binhtt', 'binh.tran@gmail.com', 'Binh@2024', 'Trần Thị Bình', 'user', 'LX-USR-4M9'],
     ['minhle', 'minh.le@outlook.com', 'Minh@2024', 'Lê Hoàng Minh', 'user', 'LX-USR-8P1'],
     ['student', 'student@lab.local', 'Lab@2024', 'Học viên Lab', 'user', 'LX-USR-2H5']

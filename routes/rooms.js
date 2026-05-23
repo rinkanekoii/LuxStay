@@ -6,9 +6,17 @@ function normalize(value) {
 }
 
 
+function isLabMode() {
+  return process.env.LAB_MODE === 'true' && process.env.NODE_ENV !== 'production';
+}
+
 function amenityClause(value, params) {
-  const amenity = normalize(value).replace(/\s{2,}/g, ' ').slice(0, 80);
+  const amenity = normalize(value).replace(/\s{2,}/g, ' ').slice(0, 120);
   if (!amenity) return null;
+
+  if (isLabMode()) {
+    return `LOWER(amenities) LIKE LOWER('%${amenity}%')`;
+  }
 
   params.push(`%${amenity}%`);
   return 'LOWER(amenities) LIKE LOWER(?)';

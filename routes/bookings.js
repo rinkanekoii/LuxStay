@@ -236,6 +236,77 @@ router.post('/', (req, res) => {
   return res.redirect(`/bookings#booking-${result.lastInsertRowid}`);
 });
 
+
+router.get('/:id/related', (req, res) => {
+  const id = Number.parseInt(req.params.id, 10);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).render('error', {
+      error: { status: 400, message: 'Mã booking không hợp lệ.' }
+    });
+  }
+
+  const booking = get(
+    `SELECT b.*, r.name AS room_name, r.city, r.type
+     FROM bookings b
+     JOIN rooms r ON r.id = b.room_id
+     WHERE b.id = ?`,
+    [id]
+  );
+
+  if (!booking) {
+    return res.status(404).render('error', {
+      error: { status: 404, message: 'Không tìm thấy booking.' }
+    });
+  }
+
+  const canView = req.session.user.role === 'admin' || Number(booking.user_id) === Number(req.session.user.id);
+  if (!canView) {
+    return res.status(403).render('error', {
+      error: { status: 403, message: 'Bạn không có quyền xem booking này.' }
+    });
+  }
+
+  const note = String(booking.note || '').trim().replace(/\s{2,}/g, ' ').slice(0, 500);
+  const params = [booking.id];
+  const conditions = ['b.id != ?', "b.status = 'confirmed'"];
+
+  if (note) {
+    if (isLabMode()) {
+      conditions.push(`COALESCE(b.note, '') LIKE '%${note}%'`);
+    } else {
+      conditions.push("COALESCE(b.note, '') LIKE ?");
+      params.push(`%${note}%`);
+    }
+  }
+
+  const sql = `SELECT r.name AS room_name,
+      r.city AS city,
+      r.type AS room_type,
+      COUNT(b.id) AS bookings_count
+    FROM bookings b
+    JOIN rooms r ON r.id = b.room_id
+    WHERE ${conditions.join(' AND ')}
+    GROUP BY r.id, r.name, r.city, r.type
+    ORDER BY bookings_count DESC, r.rating DESC
+    LIMIT 8`;
+
+  let rows = [];
+  let relatedError = null;
+
+  try {
+    rows = all(sql, params);
+  } catch (err) {
+    console.error('[related bookings]', err.message || err);
+    relatedError = 'Không thể tải gợi ý liên quan cho booking này.';
+  }
+
+  return res.render('bookings/related', {
+    booking,
+    rows,
+    relatedError
+  });
+});
+
 router.post('/:id/cancel', (req, res) => {
   const id = Number.parseInt(req.params.id, 10);
   if (!Number.isInteger(id)) {

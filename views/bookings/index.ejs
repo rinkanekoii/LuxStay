@@ -44,8 +44,11 @@
               <% } %>
               <div class="booking-actions">
                 <a href="/rooms/<%= booking.room_id %>" class="btn btn-outline btn-sm">Xem phòng</a>
+                <% if (booking.note) { %>
+                  <a href="/bookings/<%= booking.id %>/related" class="btn btn-outline btn-sm">Gợi ý tương tự</a>
+                <% } %>
                 <% if (user.role === 'admin' && booking.note) { %>
-                  <a href="/bookings/report?related_to=<%= booking.id %>" class="btn btn-outline btn-sm">So sánh</a>
+                  <a href="/bookings/report?related_to=<%= booking.id %>" class="btn btn-outline btn-sm">Báo cáo</a>
                 <% } %>
                 <% if (booking.status !== 'cancelled') { %>
                   <form method="POST" action="/bookings/<%= booking.id %>/cancel" class="inline-form" data-confirm="Bạn chắc muốn hủy booking này?">

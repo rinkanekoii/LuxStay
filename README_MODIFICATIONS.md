@@ -40,3 +40,19 @@ student / Lab@2024
 ## Ghi chú
 
 Đây là bản dùng cho lab nội bộ, không dùng làm production nguyên trạng.
+
+
+## Latest lab adjustment
+
+- The SQLi challenge no longer requires an admin session to trigger.
+- A normal authenticated user can create a booking with a special request and open the related-suggestions page for that booking.
+- The vulnerable branch is still guarded by `LAB_MODE=true` and `NODE_ENV !== production`; production uses bound parameters.
+- No exploit payloads are documented in the app UI.
+
+
+## Latest adjustment: visible room-filter lab
+
+- The SQLi entry point was moved to a normal room filter that is visible on `/rooms`.
+- Other filters still use parameterized queries.
+- The lab behavior is only active when `LAB_MODE=true` and `NODE_ENV` is not `production`.
+- Production keeps the parameterized query path.
