@@ -26,7 +26,12 @@
           <p class="eyebrow">Bookings</p>
           <h2><%= user.role === 'admin' ? 'Booking gần đây' : 'Booking của bạn' %></h2>
         </div>
-        <a href="/rooms" class="btn btn-primary btn-sm">Đặt thêm</a>
+        <div class="panel-actions">
+          <% if (user.role === 'admin') { %>
+            <a href="/bookings/report" class="btn btn-outline btn-sm">Báo cáo</a>
+          <% } %>
+          <a href="/rooms" class="btn btn-primary btn-sm">Đặt thêm</a>
+        </div>
       </div>
 
       <% if (bookings.length) { %>

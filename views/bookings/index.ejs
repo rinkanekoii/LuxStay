@@ -44,6 +44,9 @@
               <% } %>
               <div class="booking-actions">
                 <a href="/rooms/<%= booking.room_id %>" class="btn btn-outline btn-sm">Xem phòng</a>
+                <% if (user.role === 'admin' && booking.note) { %>
+                  <a href="/bookings/report?related_to=<%= booking.id %>" class="btn btn-outline btn-sm">So sánh</a>
+                <% } %>
                 <% if (booking.status !== 'cancelled') { %>
                   <form method="POST" action="/bookings/<%= booking.id %>/cancel" class="inline-form" data-confirm="Bạn chắc muốn hủy booking này?">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">

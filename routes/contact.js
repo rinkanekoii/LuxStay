@@ -1,10 +1,8 @@
 const router = require('express').Router();
 const { run, get } = require('../database/init');
-const { markVerified, consumeVerifiedFlash, looksLikeXss } = require('../lib/challenges');
 
 router.get('/', (req, res) => {
   res.render('contact/form', {
-    verifiedMsg: consumeVerifiedFlash(req.session),
     senderName: ''
   });
 });
@@ -15,7 +13,6 @@ router.post('/', (req, res) => {
 
   if (!body) {
     return res.render('contact/form', {
-      verifiedMsg: consumeVerifiedFlash(req.session),
       senderName,
       error: 'Nội dung không được để trống.'
     });
@@ -23,7 +20,6 @@ router.post('/', (req, res) => {
 
   if (body.length > 2000) {
     return res.render('contact/form', {
-      verifiedMsg: consumeVerifiedFlash(req.session),
       senderName,
       error: 'Nội dung tối đa 2000 ký tự.'
     });
@@ -53,13 +49,9 @@ router.get('/xem/:id', (req, res) => {
     });
   }
 
-  if (looksLikeXss(row.body)) {
-    markVerified(req.session, 'stored_xss');
-  }
 
   res.render('contact/view', {
-    message: row,
-    verifiedMsg: consumeVerifiedFlash(req.session)
+    message: row
   });
 });
 

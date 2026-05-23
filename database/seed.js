@@ -46,6 +46,25 @@ async function seed() {
     );
   }
 
+
+
+  const bookings = [
+    [2, 1, '2026-06-03', '2026-06-06', 2, 5550000, 'confirmed', 'Khách quay lại, ưu tiên tầng cao.'],
+    [3, 2, '2026-06-12', '2026-06-16', 4, 9800000, 'confirmed', 'Gia đình có trẻ nhỏ, cần chuẩn bị thêm khăn.'],
+    [4, 3, '2026-07-01', '2026-07-03', 2, 2640000, 'confirmed', 'Đi công tác, nhận phòng muộn.'],
+    [2, 4, '2026-07-08', '2026-07-10', 2, 3360000, 'cancelled', 'Khách đổi lịch bay.'],
+    [3, 5, '2026-08-05', '2026-08-08', 2, 2940000, 'confirmed', 'Cần bếp mini và máy giặt.'],
+    [4, 6, '2026-08-18', '2026-08-21', 3, 6300000, 'confirmed', 'Nhóm bạn đi nghỉ cuối tuần.']
+  ];
+
+  for (const b of bookings) {
+    run(
+      `INSERT INTO bookings (user_id, room_id, check_in, check_out, guests, total_price, status, note)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      b
+    );
+  }
+
   run(
     `INSERT INTO contact_messages (sender_name, body)
      VALUES (?, ?)`,
@@ -54,6 +73,7 @@ async function seed() {
 
   console.log(`✅ ${users.length} users`);
   console.log(`✅ ${rooms.length} rooms`);
+  console.log(`✅ ${bookings.length} bookings`);
   console.log('🎉 Done.');
 }
 

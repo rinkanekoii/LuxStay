@@ -10,6 +10,7 @@ const { getDb } = require('./database/init');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
+const labModeEnabled = process.env.LAB_MODE === 'true' && !isProduction;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -23,11 +24,6 @@ app.use(express.static(path.join(__dirname, 'public'), {
 app.use(express.urlencoded({ extended: true, limit: '50kb' }));
 app.use(express.json({ limit: '50kb' }));
 
-/*
-  Lab note:
-  CSP is intentionally disabled so the stored-XSS exercise in /contact/xem/:id still works.
-  Other hardening remains enabled through Helmet. Do not use this configuration for production.
-*/
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
@@ -82,6 +78,7 @@ app.use((req, res, next) => {
   res.locals.csrfToken = generateCsrfToken(req);
   res.locals.success = req.session.success || null;
   res.locals.error = req.session.error || null;
+  res.locals.labMode = labModeEnabled;
   delete req.session.success;
   delete req.session.error;
   next();

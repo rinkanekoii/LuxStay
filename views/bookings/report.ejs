@@ -1,0 +1,115 @@
+<% const pageTitle = 'Báo cáo booking'; %>
+<%- include('../partials/header') %>
+
+<section class="page-hero bookings-hero">
+  <div class="container page-hero-inner">
+    <p class="eyebrow">Revenue insights</p>
+    <h1 class="page-title">Báo cáo booking</h1>
+    <p class="page-subtitle">Tổng hợp hiệu suất đặt phòng theo thành phố, trạng thái, tháng hoặc loại phòng.</p>
+  </div>
+</section>
+
+<section class="section section-light section-tight">
+  <div class="container report-layout">
+    <form class="filter-bar report-filter" action="/bookings/report" method="GET">
+      <% if (filters.relatedTo) { %>
+        <input type="hidden" name="related_to" value="<%= filters.relatedTo %>">
+      <% } %>
+      <label>
+        <span>Nhóm theo</span>
+        <select name="dimension" class="form-input">
+          <option value="city" <%= filters.dimension === 'city' ? 'selected' : '' %>>Thành phố</option>
+          <option value="status" <%= filters.dimension === 'status' ? 'selected' : '' %>>Trạng thái</option>
+          <option value="month" <%= filters.dimension === 'month' ? 'selected' : '' %>>Tháng nhận phòng</option>
+          <option value="room_type" <%= filters.dimension === 'room_type' ? 'selected' : '' %>>Loại phòng</option>
+        </select>
+      </label>
+      <label>
+        <span>Trạng thái</span>
+        <select name="status" class="form-input">
+          <option value="" <%= !filters.status ? 'selected' : '' %>>Tất cả</option>
+          <option value="confirmed" <%= filters.status === 'confirmed' ? 'selected' : '' %>>confirmed</option>
+          <option value="cancelled" <%= filters.status === 'cancelled' ? 'selected' : '' %>>cancelled</option>
+        </select>
+      </label>
+      <label>
+        <span>Từ ngày</span>
+        <input type="date" name="from" value="<%= filters.from %>">
+      </label>
+      <label>
+        <span>Đến ngày</span>
+        <input type="date" name="to" value="<%= filters.to %>">
+      </label>
+      <label>
+        <span>Sắp xếp</span>
+        <select name="sort" class="form-input">
+          <option value="revenue_desc" <%= filters.sort === 'revenue_desc' ? 'selected' : '' %>>Doanh thu giảm dần</option>
+          <option value="revenue_asc" <%= filters.sort === 'revenue_asc' ? 'selected' : '' %>>Doanh thu tăng dần</option>
+          <option value="count_desc" <%= filters.sort === 'count_desc' ? 'selected' : '' %>>Nhiều booking nhất</option>
+          <option value="name_asc" <%= filters.sort === 'name_asc' ? 'selected' : '' %>>Tên A-Z</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" type="submit">Xem báo cáo</button>
+      <a href="/bookings/report" class="btn btn-outline">Đặt lại</a>
+    </form>
+
+
+    <% if (relatedBooking) { %>
+      <div class="panel-card report-context">
+        <p class="eyebrow">Comparison set</p>
+        <h2>Đang so sánh với booking #<%= relatedBooking.id %></h2>
+        <p><%= relatedBooking.room_name %> · <%= relatedBooking.guest_name %></p>
+      </div>
+    <% } %>
+
+    <% if (reportError) { %>
+      <div class="panel-card report-error">
+        <p class="eyebrow">Report status</p>
+        <h2>Không thể tạo báo cáo</h2>
+        <p><%= reportError %></p>
+      </div>
+    <% } %>
+
+    <% if (rows.length) { %>
+      <div class="panel-card report-table-card">
+        <div class="panel-header page-actions">
+          <div>
+            <p class="eyebrow">Summary</p>
+            <h2>Kết quả tổng hợp</h2>
+          </div>
+          <a href="/bookings" class="btn btn-outline btn-sm">Danh sách booking</a>
+        </div>
+        <div class="table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Nhóm</th>
+                <th>Số booking</th>
+                <th>Doanh thu</th>
+                <th>Khách TB</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% rows.forEach((row) => { %>
+                <tr>
+                  <td><strong><%= row.bucket || 'Không xác định' %></strong></td>
+                  <td><%= row.bookings_count || 0 %></td>
+                  <td><%= Number(row.revenue || 0).toLocaleString('vi-VN') %>đ</td>
+                  <td><%= row.avg_guests || 0 %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% } else if (!reportError) { %>
+      <div class="empty-card wide">
+        <h2>Chưa có dữ liệu phù hợp</h2>
+        <p>Báo cáo trống. Rất trang nhã, nhưng vô dụng như một chiếc ô trong phòng server.</p>
+        <a href="/bookings/report" class="btn btn-primary">Xem toàn bộ</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

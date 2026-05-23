@@ -5,9 +5,19 @@ function normalize(value) {
   return String(value || '').trim();
 }
 
+
+function amenityClause(value, params) {
+  const amenity = normalize(value).replace(/\s{2,}/g, ' ').slice(0, 80);
+  if (!amenity) return null;
+
+  params.push(`%${amenity}%`);
+  return 'LOWER(amenities) LIKE LOWER(?)';
+}
+
 router.get('/', (req, res) => {
   const city = normalize(req.query.city);
   const guests = Number.parseInt(req.query.guests, 10);
+  const amenity = normalize(req.query.amenity);
 
   const conditions = ['is_available = 1'];
   const params = [];
@@ -22,6 +32,11 @@ router.get('/', (req, res) => {
     params.push(guests);
   }
 
+  const amenityFilter = amenityClause(amenity, params);
+  if (amenityFilter) {
+    conditions.push(amenityFilter);
+  }
+
   const rooms = all(
     `SELECT id, name, city, type, description, image, price_per_night, max_guests, beds, amenities, rating
      FROM rooms
@@ -32,7 +47,11 @@ router.get('/', (req, res) => {
 
   res.render('rooms/index', {
     rooms,
-    filters: { city, guests: Number.isInteger(guests) && guests > 0 ? guests : '' }
+    filters: {
+      city,
+      guests: Number.isInteger(guests) && guests > 0 ? guests : '',
+      amenity
+    }
   });
 });
 

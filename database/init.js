@@ -84,6 +84,10 @@ async function getDb() {
   try { db.run("ALTER TABLE rooms ADD COLUMN beds TEXT DEFAULT '1 giường queen'"); } catch (_) {}
   try { db.run("ALTER TABLE rooms ADD COLUMN rating REAL DEFAULT 4.8"); } catch (_) {}
   try { db.run('ALTER TABLE rooms ADD COLUMN is_available INTEGER DEFAULT 1'); } catch (_) {}
+  try { db.run('ALTER TABLE rooms ADD COLUMN price INTEGER DEFAULT 1200000'); } catch (_) {}
+  try { db.run('ALTER TABLE rooms ADD COLUMN capacity INTEGER DEFAULT 2'); } catch (_) {}
+  try { db.run("ALTER TABLE rooms ADD COLUMN image_url TEXT DEFAULT '/img/room-skyline.svg'"); } catch (_) {}
+  try { db.run('ALTER TABLE rooms ADD COLUMN available INTEGER DEFAULT 1'); } catch (_) {}
 
   try { db.run("ALTER TABLE bookings ADD COLUMN status TEXT DEFAULT 'confirmed'"); } catch (_) {}
   try { db.run('ALTER TABLE bookings ADD COLUMN note TEXT'); } catch (_) {}

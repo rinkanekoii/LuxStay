@@ -28,6 +28,9 @@
           <a href="/rooms" class="nav-link">Phòng</a>
           <% if (user) { %>
             <a href="/bookings" class="nav-link">Đặt phòng của tôi</a>
+            <% if (user.role === 'admin') { %>
+              <a href="/bookings/report" class="nav-link">Báo cáo</a>
+            <% } %>
             <a href="/dashboard" class="nav-link">Dashboard</a>
           <% } %>
           <a href="/contact" class="nav-link">Liên hệ</a>

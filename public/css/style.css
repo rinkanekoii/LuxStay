@@ -1026,3 +1026,47 @@ main { min-height: 72vh; }
   .panel-card, .detail-card, .auth-card { padding: 20px; }
   .booking-info-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+.report-layout { display: grid; gap: 24px; }
+.report-filter { grid-template-columns: repeat(5, minmax(130px, 1fr)) auto auto; align-items: end; }
+.report-filter select { width: 100%; }
+.report-table-card { overflow: hidden; }
+.table-wrap { overflow-x: auto; border-radius: var(--r-md); border: 1px solid rgba(18, 49, 43, .1); }
+.report-table { width: 100%; border-collapse: collapse; min-width: 680px; background: #fff; }
+.report-table th, .report-table td { padding: 16px 18px; text-align: left; border-bottom: 1px solid rgba(18, 49, 43, .08); }
+.report-table th { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); background: var(--cream); }
+.report-table tr:last-child td { border-bottom: 0; }
+.report-error { border-color: rgba(157, 54, 54, .24); background: rgba(157, 54, 54, .06); }
+.report-error h2 { color: #7f2424; }
+
+@media (max-width: 1120px) {
+  .report-filter { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .report-filter { grid-template-columns: 1fr; }
+}
+
+.panel-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+
+.message-tools {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.message-preview-box {
+  display: none;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(141, 110, 99, 0.18);
+  color: var(--text-main);
+  line-height: 1.7;
+}
+
+.message-preview-box:not(:empty) {
+  display: block;
+}

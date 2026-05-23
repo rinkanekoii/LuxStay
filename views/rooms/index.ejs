@@ -5,7 +5,7 @@
   <div class="container page-hero-inner">
     <p class="eyebrow">Rooms</p>
     <h1 class="page-title">Chọn không gian phù hợp cho chuyến đi.</h1>
-    <p class="page-subtitle">Tìm theo thành phố, số khách và xem chi tiết từng phòng trước khi đặt.</p>
+    <p class="page-subtitle">Tìm theo thành phố, số khách, tiện nghi và xem chi tiết từng phòng trước khi đặt.</p>
   </div>
 </section>
 
@@ -19,6 +19,18 @@
       <label>
         <span>Số khách</span>
         <input type="number" name="guests" min="1" max="8" value="<%= filters.guests %>" placeholder="2">
+      </label>
+      <label>
+        <span>Tiện nghi</span>
+        <input type="text" name="amenity" value="<%= filters.amenity %>" list="amenitySuggestions" placeholder="View biển, bếp nhỏ...">
+        <datalist id="amenitySuggestions">
+          <option value="View biển">
+          <option value="Bếp nhỏ">
+          <option value="Ban công">
+          <option value="Bữa sáng">
+          <option value="Bãi đỗ xe">
+          <option value="Smart TV">
+        </datalist>
       </label>
       <button class="btn btn-primary" type="submit">Lọc phòng</button>
       <a href="/rooms" class="btn btn-outline">Xóa lọc</a>

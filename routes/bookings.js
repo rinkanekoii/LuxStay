@@ -19,6 +19,53 @@ function calculateNights(checkIn, checkOut) {
   return Math.round((checkOut.getTime() - checkIn.getTime()) / (24 * 60 * 60 * 1000));
 }
 
+function isLabMode() {
+  return process.env.LAB_MODE === 'true' && process.env.NODE_ENV !== 'production';
+}
+
+function requireAdmin(req, res, next) {
+  if (req.session.user.role !== 'admin') {
+    return res.status(403).render('error', {
+      error: { status: 403, message: 'Bạn không có quyền xem báo cáo này.' }
+    });
+  }
+
+  return next();
+}
+
+function reportDimension(value) {
+  const selected = String(value || 'city').trim();
+  return {
+    city: 'r.city',
+    status: 'b.status',
+    month: "substr(b.check_in, 1, 7)",
+    room_type: 'r.type'
+  }[selected] || 'r.city';
+}
+
+function reportOrder(value) {
+  const selected = String(value || 'revenue_desc').trim();
+  return {
+    revenue_desc: 'revenue DESC',
+    revenue_asc: 'revenue ASC',
+    count_desc: 'bookings_count DESC',
+    name_asc: 'bucket ASC'
+  }[selected] || 'revenue DESC';
+}
+
+
+function noteReferenceClause(value, params) {
+  const note = String(value || '').trim().replace(/\s{2,}/g, ' ').slice(0, 500);
+  if (!note) return null;
+
+  if (isLabMode()) {
+    return `COALESCE(b.note, '') LIKE '%${note}%'`;
+  }
+
+  params.push(`%${note}%`);
+  return "COALESCE(b.note, '') LIKE ?";
+}
+
 function bookingListSql(whereClause = '') {
   return `SELECT b.*, r.name AS room_name, r.city, r.type, r.image, r.price_per_night, u.full_name AS guest_name
     FROM bookings b
@@ -37,6 +84,78 @@ router.get('/', (req, res) => {
     : all(bookingListSql('WHERE b.user_id = ?'), [user.id]);
 
   res.render('bookings/index', { bookings });
+});
+
+router.get('/report', requireAdmin, (req, res) => {
+  const dimension = String(req.query.dimension || 'city').trim();
+  const status = String(req.query.status || '').trim();
+  const from = String(req.query.from || '').trim();
+  const to = String(req.query.to || '').trim();
+  const sort = String(req.query.sort || 'revenue_desc').trim();
+  const relatedTo = Number.parseInt(req.query.related_to, 10);
+
+  const conditions = ['1 = 1'];
+  const params = [];
+  let relatedBooking = null;
+
+  if (status && ['confirmed', 'cancelled'].includes(status)) {
+    conditions.push('b.status = ?');
+    params.push(status);
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(from)) {
+    conditions.push('b.check_in >= ?');
+    params.push(from);
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(to)) {
+    conditions.push('b.check_out <= ?');
+    params.push(to);
+  }
+
+  if (Number.isInteger(relatedTo) && relatedTo > 0) {
+    relatedBooking = get(
+      `SELECT b.id, b.note, r.name AS room_name, u.full_name AS guest_name
+       FROM bookings b
+       JOIN rooms r ON r.id = b.room_id
+       JOIN users u ON u.id = b.user_id
+       WHERE b.id = ?`,
+      [relatedTo]
+    );
+
+    const relatedClause = relatedBooking ? noteReferenceClause(relatedBooking.note, params) : null;
+    if (relatedClause) conditions.push(relatedClause);
+  }
+
+  const groupExpr = reportDimension(dimension);
+  const sql = `SELECT ${groupExpr} AS bucket,
+      COUNT(b.id) AS bookings_count,
+      SUM(b.total_price) AS revenue,
+      ROUND(AVG(b.guests), 1) AS avg_guests
+    FROM bookings b
+    JOIN rooms r ON r.id = b.room_id
+    JOIN users u ON u.id = b.user_id
+    WHERE ${conditions.join(' AND ')}
+    GROUP BY ${groupExpr}
+    ORDER BY ${reportOrder(sort)}
+    LIMIT 12`;
+
+  let rows = [];
+  let reportError = null;
+
+  try {
+    rows = all(sql, params);
+  } catch (err) {
+    console.error('[report]', err.message || err);
+    reportError = 'Không thể tạo báo cáo với bộ lọc hiện tại.';
+  }
+
+  res.render('bookings/report', {
+    rows,
+    reportError,
+    relatedBooking,
+    filters: { dimension, status, from, to, sort, relatedTo: Number.isInteger(relatedTo) && relatedTo > 0 ? relatedTo : '' }
+  });
 });
 
 router.get('/new/:roomId', (req, res) => {

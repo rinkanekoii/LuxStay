@@ -79,3 +79,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.animate-on-scroll').forEach((el) => el.classList.add('visible'));
   }
 });
+
+document.querySelectorAll('.message-preview-trigger').forEach((button) => {
+  button.addEventListener('click', () => {
+    const targetSelector = button.dataset.previewTarget || '#messagePreview';
+    const preview = document.querySelector(targetSelector);
+    if (!preview) return;
+
+    const rawContent = button.dataset.previewContent || '';
+    preview.innerHTML = rawContent
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .join('<br>');
+  });
+});

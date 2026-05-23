@@ -1,16 +1,14 @@
 const router = require('express').Router();
 const { get } = require('../database/init');
-const { markVerified, consumeVerifiedFlash } = require('../lib/challenges');
 
 function renderLogin(req, res, state) {
   return res.render('auth/login', {
     username: state.username || '',
-    error: state.error || null,
-    verifiedMsg: state.verifiedMsg !== undefined ? state.verifiedMsg : consumeVerifiedFlash(req.session)
+    error: state.error || null
   });
 }
 
-function startSession(req, res, user, verifiedKey = null) {
+function startSession(req, res, user) {
   req.session.regenerate((err) => {
     if (err) {
       console.error('[session regenerate]', err);
@@ -26,10 +24,6 @@ function startSession(req, res, user, verifiedKey = null) {
       full_name: user.full_name,
       role: user.role
     };
-
-    if (verifiedKey) {
-      markVerified(req.session, verifiedKey);
-    }
 
     req.session.success = `Đăng nhập thành công. Xin chào, ${user.full_name || user.username}!`;
     return res.redirect('/dashboard');

@@ -15,7 +15,18 @@
         #<%= message.id %> · <%= new Date(message.created_at).toLocaleString('vi-VN') %>
         <% if (message.sender_name) { %> · <%= message.sender_name %><% } %>
       </p>
-      <div class="contact-message-body"><%- message.body %></div>
+
+      <div class="contact-message-body"><%= message.body %></div>
+
+      <div class="message-tools">
+        <button type="button" class="btn btn-ghost btn-sm message-preview-trigger"
+                data-preview-target="#messagePreview"
+                data-preview-content="<%= message.body %>">
+          Xem bản định dạng
+        </button>
+      </div>
+
+      <div id="messagePreview" class="message-preview-box" aria-live="polite"></div>
     </div>
 
     <p class="center-links">
