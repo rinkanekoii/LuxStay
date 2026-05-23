@@ -1,0 +1,46 @@
+<% const pageTitle = room.name; %>
+<%- include('../partials/header') %>
+
+<section class="room-detail-hero">
+  <div class="container room-detail-grid">
+    <div class="room-detail-copy">
+      <p class="eyebrow"><%= room.city %> · <%= room.type %></p>
+      <h1><%= room.name %></h1>
+      <p><%= room.description %></p>
+      <div class="detail-meta-row">
+        <span>★ <%= room.rating %></span>
+        <span><%= room.beds %></span>
+        <span>Tối đa <%= room.max_guests %> khách</span>
+      </div>
+    </div>
+    <img src="<%= room.image %>" alt="<%= room.name %>" class="room-detail-image">
+  </div>
+</section>
+
+<section class="section section-light section-tight">
+  <div class="container detail-layout">
+    <section class="panel-card main-panel">
+      <p class="eyebrow">Amenities</p>
+      <h2>Tiện nghi nổi bật</h2>
+      <div class="amenity-grid">
+        <% room.amenityList.forEach((item) => { %>
+          <span><%= item %></span>
+        <% }) %>
+      </div>
+    </section>
+
+    <aside class="booking-card panel-card">
+      <p class="room-type">Giá từ</p>
+      <strong class="price-large"><%= Number(room.price_per_night).toLocaleString('vi-VN') %>đ</strong>
+      <small>/ đêm</small>
+      <% if (room.is_available) { %>
+        <a href="/bookings/new/<%= room.id %>" class="btn btn-primary btn-full">Đặt phòng</a>
+      <% } else { %>
+        <button class="btn btn-outline btn-full" disabled>Tạm hết phòng</button>
+      <% } %>
+      <a href="/rooms" class="form-link center">Quay lại danh sách</a>
+    </aside>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

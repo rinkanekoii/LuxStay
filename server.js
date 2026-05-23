@@ -9,33 +9,48 @@ const { getDb } = require('./database/init');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === 'production';
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('trust proxy', 1);
+app.disable('x-powered-by');
 
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public'), {
+  etag: true,
+  maxAge: isProduction ? '1d' : 0
+}));
+app.use(express.urlencoded({ extended: true, limit: '50kb' }));
+app.use(express.json({ limit: '50kb' }));
 
+/*
+  Lab note:
+  CSP is intentionally disabled so the stored-XSS exercise in /contact/xem/:id still works.
+  Other hardening remains enabled through Helmet. Do not use this configuration for production.
+*/
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  referrerPolicy: { policy: 'same-origin' },
+  frameguard: { action: 'sameorigin' }
 }));
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 80,
-  message: 'Quá nhiều yêu cầu, vui lòng thử lại sau.',
+  max: 60,
+  message: 'Quá nhiều yêu cầu đăng nhập, vui lòng thử lại sau.',
   standardHeaders: true,
   legacyHeaders: false
 });
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'luxstay-fallback-secret-2024',
+  name: 'luxstay.sid',
+  secret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
+  rolling: true,
   cookie: {
-    secure: false,
+    secure: isProduction,
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: 'lax'
@@ -49,6 +64,19 @@ function generateCsrfToken(req) {
   return req.session.csrfToken;
 }
 
+function validateCsrf(req, res, next) {
+  if (req.method !== 'POST') return next();
+
+  const formToken = req.body?._csrf || req.headers['x-csrf-token'];
+  if (!req.session.csrfToken || formToken !== req.session.csrfToken) {
+    return res.status(403).render('error', {
+      error: { status: 403, message: 'Phiên gửi biểu mẫu không hợp lệ. Vui lòng tải lại trang.' }
+    });
+  }
+
+  return next();
+}
+
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.csrfToken = generateCsrfToken(req);
@@ -59,11 +87,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(validateCsrf);
+
 async function startServer() {
   await getDb();
   console.log('📦 Database connected');
 
   app.use('/', require('./routes/index'));
+  app.use('/rooms', require('./routes/rooms'));
+  app.use('/bookings', require('./routes/bookings'));
   app.use('/auth', authLimiter, require('./routes/auth'));
   app.use('/support', require('./routes/support'));
   app.use('/contact', require('./routes/contact'));
@@ -79,9 +111,7 @@ async function startServer() {
     res.status(err.status || 500).render('error', {
       error: {
         status: err.status || 500,
-        message: process.env.NODE_ENV === 'production'
-          ? 'Đã xảy ra lỗi. Vui lòng thử lại sau.'
-          : err.message
+        message: isProduction ? 'Đã xảy ra lỗi. Vui lòng thử lại sau.' : err.message
       }
     });
   });

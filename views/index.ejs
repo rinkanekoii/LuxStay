@@ -1,68 +1,90 @@
 <% const pageTitle = undefined; %>
 <%- include('partials/header') %>
 
-<section class="hero hero--intro">
-  <div class="hero-bg">
-    <div class="hero-blob hero-blob-1"></div>
-    <div class="hero-blob hero-blob-2"></div>
-  </div>
-  <div class="hero-content">
-    <p class="hero-eyebrow">LuxStay Internal</p>
-    <h1 class="hero-title">Lux<span class="text-gradient">Stay</span></h1>
-    <p class="hero-subtitle">
-      Nền tảng nội bộ dành cho đối tác và nhân sự. Vui lòng đăng nhập để tiếp tục.
-    </p>
-    <div class="hero-cta">
-      <% if (user) { %>
-        <span class="hero-welcome">Xin chào, <strong><%= user.full_name || user.username %></strong></span>
-        <a href="/auth/logout" class="btn btn-outline">Đăng xuất</a>
-      <% } else { %>
-        <a href="/auth/login" class="btn btn-primary btn-lg">Đăng nhập</a>
-      <% } %>
-    </div>
-  </div>
-</section>
-
-<% if (verifiedMsg) { %>
-<section class="section">
-  <div class="container" style="max-width:560px">
-    <div class="form-alert form-alert-success"><%= verifiedMsg %></div>
-  </div>
-</section>
-<% } %>
-
-<section class="section section-dark">
-  <div class="container">
-    <div class="intro-grid">
-      <article class="intro-card">
-        <div class="intro-icon">🏢</div>
-        <h3>Giới thiệu</h3>
-        <p>LuxStay phát triển giải pháp quản lý lưu trú và trải nghiệm khách hàng cho thị trường Việt Nam.</p>
-      </article>
-      <article class="intro-card">
-        <div class="intro-icon">🔒</div>
-        <h3>Truy cập có kiểm soát</h3>
-        <p>Tài khoản do bộ phận IT cấp. Liên hệ quản trị nếu bạn quên mật khẩu.</p>
-      </article>
-      <article class="intro-card">
-        <div class="intro-icon">📋</div>
-        <h3>Hỗ trợ</h3>
-        <p>Xác minh mã nhân viên hoặc gửi yêu cầu qua mục liên hệ.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="stats-grid">
-      <div class="stat-card stat-card-gold">
-        <span class="stat-card-icon">👤</span>
-        <div>
-          <span class="stat-card-number"><%= stats.totalUsers %></span>
-          <span class="stat-card-label">Tài khoản hệ thống</span>
-        </div>
+<section class="hero hero--image">
+  <div class="hero-overlay"></div>
+  <div class="container hero-grid">
+    <div class="hero-content animate-on-scroll">
+      <p class="eyebrow">Boutique stays across Vietnam</p>
+      <h1 class="hero-title">Tìm phòng nghỉ đẹp, đặt nhanh, quản lý gọn.</h1>
+      <p class="hero-subtitle">
+        LuxStay giúp bạn chọn phòng theo thành phố, xem chi tiết tiện nghi và hoàn tất booking trong vài bước rõ ràng.
+      </p>
+      <div class="hero-actions">
+        <a href="/rooms" class="btn btn-primary btn-lg">Khám phá phòng</a>
+        <% if (user) { %>
+          <a href="/dashboard" class="btn btn-light btn-lg">Vào dashboard</a>
+        <% } else { %>
+          <a href="/auth/login" class="btn btn-light btn-lg">Đăng nhập</a>
+        <% } %>
       </div>
+    </div>
+
+    <form class="search-panel animate-on-scroll" action="/rooms" method="GET">
+      <p class="search-kicker">Tìm nơi ở</p>
+      <label>
+        <span>Thành phố</span>
+        <input name="city" type="text" placeholder="Đà Nẵng, Hà Nội...">
+      </label>
+      <label>
+        <span>Số khách</span>
+        <input name="guests" type="number" min="1" max="8" placeholder="2">
+      </label>
+      <button class="btn btn-primary btn-full" type="submit">Tìm phòng</button>
+    </form>
+  </div>
+</section>
+
+<section class="section section-light">
+  <div class="container">
+    <div class="section-header left">
+      <p class="eyebrow">Featured rooms</p>
+      <h2 class="section-title">Phòng nổi bật</h2>
+      <p class="section-subtitle">Một vài lựa chọn đẹp trước khi bạn lạc vào mê cung quyết định, phát minh vĩ đại của loài người.</p>
+    </div>
+
+    <div class="room-grid">
+      <% featuredRooms.forEach((room) => { %>
+        <article class="room-card animate-on-scroll">
+          <a href="/rooms/<%= room.id %>" class="room-image-wrap">
+            <img src="<%= room.image %>" alt="<%= room.name %>" class="room-image">
+            <span class="room-badge"><%= room.city %></span>
+          </a>
+          <div class="room-card-body">
+            <div class="room-title-row">
+              <div>
+                <p class="room-type"><%= room.type %></p>
+                <h3><a href="/rooms/<%= room.id %>"><%= room.name %></a></h3>
+              </div>
+              <span class="rating">★ <%= room.rating %></span>
+            </div>
+            <p><%= room.description %></p>
+            <div class="room-meta">
+              <span>Tối đa <%= room.max_guests %> khách</span>
+              <strong><%= Number(room.price_per_night).toLocaleString('vi-VN') %>đ/đêm</strong>
+            </div>
+            <div class="card-actions">
+              <a href="/rooms/<%= room.id %>" class="btn btn-outline btn-full">Xem chi tiết</a>
+            </div>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section experience-section">
+  <div class="container split-section">
+    <div class="image-panel animate-on-scroll"></div>
+    <div class="copy-panel animate-on-scroll">
+      <p class="eyebrow">Smooth booking</p>
+      <h2 class="section-title">Flow đặt phòng rõ ràng từ chọn phòng đến dashboard.</h2>
+      <div class="step-list">
+        <div><span>01</span><p>Tìm phòng theo thành phố và số khách.</p></div>
+        <div><span>02</span><p>Xem tiện nghi, giá phòng, sức chứa và ảnh minh họa.</p></div>
+        <div><span>03</span><p>Đăng nhập, chọn ngày, tạo booking và quản lý trong dashboard.</p></div>
+      </div>
+      <a href="/rooms" class="btn btn-primary">Bắt đầu đặt phòng</a>
     </div>
   </div>
 </section>

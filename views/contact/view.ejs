@@ -1,22 +1,27 @@
 <% const pageTitle = 'Chi tiết liên hệ'; %>
 <%- include('../partials/header') %>
 
-<section class="section">
-  <div class="container" style="max-width:560px">
-    <% if (verifiedMsg) { %>
-      <div class="form-alert form-alert-success" style="margin-bottom:20px"><%= verifiedMsg %></div>
-    <% } %>
+<section class="page-hero contact-hero small">
+  <div class="container page-hero-inner">
+    <p class="eyebrow">Message</p>
+    <h1 class="page-title">Chi tiết yêu cầu</h1>
+  </div>
+</section>
 
-    <div class="detail-card">
-      <p class="text-muted" style="font-size:0.8rem;margin-bottom:16px">
+<section class="section section-light section-tight">
+  <div class="container narrow">
+    <div class="detail-card elevated-card">
+      <p class="text-muted meta-line">
         #<%= message.id %> · <%= new Date(message.created_at).toLocaleString('vi-VN') %>
         <% if (message.sender_name) { %> · <%= message.sender_name %><% } %>
       </p>
       <div class="contact-message-body"><%- message.body %></div>
     </div>
 
-    <p style="text-align:center;margin-top:24px">
-      <a href="/contact" class="form-link">Gửi tin mới</a> · <a href="/" class="form-link">Trang chủ</a>
+    <p class="center-links">
+      <a href="/contact" class="form-link">Gửi yêu cầu mới</a>
+      <span>·</span>
+      <a href="/dashboard" class="form-link">Dashboard</a>
     </p>
   </div>
 </section>

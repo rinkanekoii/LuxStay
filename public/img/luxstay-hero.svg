@@ -1,0 +1,27 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000'>
+  <defs>
+    <linearGradient id='wall' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0' stop-color='#122822'/><stop offset='.55' stop-color='#21463d'/><stop offset='1' stop-color='#c58b49'/>
+    </linearGradient>
+    <linearGradient id='sun' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0' stop-color='#ffdf9a'/><stop offset='1' stop-color='#f59e56'/>
+    </linearGradient>
+    <filter id='shadow'><feDropShadow dx='0' dy='34' stdDeviation='28' flood-opacity='.28'/></filter>
+  </defs>
+  <rect width='1600' height='1000' fill='url(#wall)'/>
+  <circle cx='1280' cy='130' r='280' fill='url(#sun)' opacity='.38'/>
+  <path d='M0 690 C230 604 440 720 704 628 C970 536 1198 618 1600 520 L1600 1000 L0 1000Z' fill='#f6e8d4' opacity='.2'/>
+  <rect x='900' y='125' width='470' height='510' rx='44' fill='#dbf1f5' opacity='.72' filter='url(#shadow)'/>
+  <rect x='935' y='160' width='185' height='440' rx='28' fill='#fff' opacity='.28'/>
+  <rect x='1148' y='160' width='185' height='440' rx='28' fill='#fff' opacity='.23'/>
+  <path d='M930 550 C1015 498 1072 555 1142 488 C1223 410 1298 493 1365 440 L1365 620 L930 620 Z' fill='#0f6f5f' opacity='.45'/>
+  <rect x='250' y='520' width='780' height='230' rx='60' fill='#fff6ec' filter='url(#shadow)'/>
+  <rect x='340' y='450' width='430' height='160' rx='44' fill='#ead6bd' filter='url(#shadow)'/>
+  <rect x='386' y='482' width='340' height='98' rx='30' fill='#fffaf4'/>
+  <rect x='200' y='690' width='890' height='115' rx='42' fill='#0f6f5f'/>
+  <rect x='290' y='770' width='96' height='150' rx='28' fill='#6f4529'/>
+  <rect x='890' y='770' width='96' height='150' rx='28' fill='#6f4529'/>
+  <rect x='1080' y='675' width='210' height='90' rx='28' fill='#d89a4a'/>
+  <circle cx='1228' cy='720' r='20' fill='#fff3db'/>
+  <path d='M1120 744 C1152 710 1180 756 1210 718 C1235 686 1260 724 1278 704 L1278 755 L1120 755 Z' fill='#fff3db' opacity='.72'/>
+</svg>

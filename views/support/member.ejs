@@ -1,40 +1,37 @@
 <% const pageTitle = 'Xác minh mã nhân viên'; %>
 <%- include('../partials/header') %>
 
-<section class="page-header">
-  <div class="container">
-    <h1 class="page-title">Xác Minh Mã Nhân Viên</h1>
-    <p class="page-subtitle">Dành cho bộ phận nhân sự và đối tác nội bộ</p>
+<section class="page-hero member-hero">
+  <div class="container page-hero-inner">
+    <p class="eyebrow">Staff verification</p>
+    <h1 class="page-title">Xác minh mã nhân viên</h1>
+    <p class="page-subtitle">Kiểm tra trạng thái mã nội bộ dành cho nhân viên và đối tác vận hành.</p>
   </div>
 </section>
 
-<section class="section">
-  <div class="container" style="max-width:480px">
-    <% if (verifiedMsg) { %>
-      <div class="form-alert form-alert-success" style="margin-bottom:20px"><%= verifiedMsg %></div>
-    <% } %>
-
-    <div class="detail-card">
+<section class="section section-light section-tight">
+  <div class="container narrow">
+    <div class="detail-card elevated-card">
       <form method="POST" action="/support/member" class="auth-form">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="form-group">
           <label class="form-label" for="code">Mã nhân viên</label>
           <input type="text" id="code" name="code" class="form-input"
-                 value="<%= code %>" required autocomplete="off">
+                 value="<%= code %>" required autocomplete="off" placeholder="Nhập mã nhân viên">
         </div>
         <button type="submit" class="btn btn-primary btn-full">Kiểm tra</button>
       </form>
 
       <% if (result) { %>
-        <p class="member-result <%= result.ok ? 'member-result--ok' : 'member-result--no' %>" style="margin-top:20px">
+        <p class="member-result <%= result.ok ? 'member-result--ok' : 'member-result--no' %>">
           <%= result.text %>
         </p>
       <% } %>
     </div>
 
-    <p style="text-align:center;margin-top:20px">
+    <p class="center-links">
       <a href="/auth/login" class="form-link">Đăng nhập</a>
-      ·
+      <span>·</span>
       <a href="/" class="form-link">Trang chủ</a>
     </p>
   </div>

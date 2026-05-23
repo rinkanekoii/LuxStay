@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { get, execRaw } = require('../database/init');
+const { get } = require('../database/init');
 const { markVerified, consumeVerifiedFlash } = require('../lib/challenges');
 
 function renderLogin(req, res, state) {
@@ -10,11 +10,37 @@ function renderLogin(req, res, state) {
   });
 }
 
+function startSession(req, res, user, verifiedKey = null) {
+  req.session.regenerate((err) => {
+    if (err) {
+      console.error('[session regenerate]', err);
+      return res.status(500).render('error', {
+        error: { status: 500, message: 'Không thể tạo phiên đăng nhập mới.' }
+      });
+    }
+
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      full_name: user.full_name,
+      role: user.role
+    };
+
+    if (verifiedKey) {
+      markVerified(req.session, verifiedKey);
+    }
+
+    req.session.success = `Đăng nhập thành công. Xin chào, ${user.full_name || user.username}!`;
+    return res.redirect('/dashboard');
+  });
+}
+
 router.get('/login', (req, res) => {
   if (req.session.user && !req.query.retry) {
-    return res.redirect('/');
+    return res.redirect('/dashboard');
   }
-  renderLogin(req, res, {});
+  return renderLogin(req, res, {});
 });
 
 router.post('/login', (req, res) => {
@@ -28,45 +54,14 @@ router.post('/login', (req, res) => {
     });
   }
 
-  const safeUser = get(
+  const user = get(
     `SELECT id, username, email, full_name, role FROM users
      WHERE username = ? AND password = ?`,
     [username, password]
   );
 
-  const legacySql = `SELECT id, username, email, full_name, role FROM users
-    WHERE username = '${username}' AND password = '${password}'`;
-  const { rows, error } = execRaw(legacySql);
-  if (error) console.error('[login legacy]', error);
-
-  const legacyUser = rows[0];
-
-  if (safeUser) {
-    req.session.user = {
-      id: safeUser.id,
-      username: safeUser.username,
-      email: safeUser.email,
-      full_name: safeUser.full_name,
-      role: safeUser.role
-    };
-    req.session.success = `Đăng nhập thành công. Xin chào, ${safeUser.full_name || safeUser.username}!`;
-    return res.redirect('/');
-  }
-
-  if (legacyUser) {
-    markVerified(req.session, 'login_sql');
-    req.session.user = {
-      id: legacyUser.id,
-      username: legacyUser.username,
-      email: legacyUser.email,
-      full_name: legacyUser.full_name,
-      role: legacyUser.role
-    };
-
-    return renderLogin(req, res, {
-      username,
-      verifiedMsg: consumeVerifiedFlash(req.session)
-    });
+  if (user) {
+    return startSession(req, res, user);
   }
 
   return renderLogin(req, res, {

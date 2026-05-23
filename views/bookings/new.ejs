@@ -1,0 +1,74 @@
+<% const pageTitle = 'Đặt phòng'; %>
+<%- include('../partials/header') %>
+
+<section class="page-hero booking-hero">
+  <div class="container page-hero-inner">
+    <p class="eyebrow">Booking</p>
+    <h1 class="page-title">Hoàn tất đặt phòng</h1>
+    <p class="page-subtitle">Chọn ngày lưu trú và số khách cho <%= room.name %>.</p>
+  </div>
+</section>
+
+<section class="section section-light section-tight">
+  <div class="container booking-create-grid">
+    <article class="room-card sticky-room-card">
+      <img src="<%= room.image %>" alt="<%= room.name %>" class="room-image standalone">
+      <div class="room-card-body">
+        <p class="room-type"><%= room.city %> · <%= room.type %></p>
+        <h2><%= room.name %></h2>
+        <p><%= room.description %></p>
+        <div class="room-facts">
+          <span><%= room.beds %></span>
+          <span>Tối đa <%= room.max_guests %> khách</span>
+        </div>
+        <strong><%= Number(room.price_per_night).toLocaleString('vi-VN') %>đ/đêm</strong>
+      </div>
+    </article>
+
+    <div class="auth-card elevated-card">
+      <div class="auth-header">
+        <h2>Thông tin lưu trú</h2>
+        <p>Kiểm tra kỹ ngày tháng, vì calendar là nơi lỗi logic thích ẩn nấp.</p>
+      </div>
+
+      <% if (formError) { %>
+        <div class="form-alert form-alert-error"><%= formError %></div>
+      <% } %>
+
+      <form action="/bookings" method="POST" class="auth-form booking-form" data-price="<%= room.price_per_night %>">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="room_id" value="<%= room.id %>">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="check_in" class="form-label">Ngày nhận phòng</label>
+            <input type="date" id="check_in" name="check_in" class="form-input" value="<%= form.check_in %>" required>
+          </div>
+          <div class="form-group">
+            <label for="check_out" class="form-label">Ngày trả phòng</label>
+            <input type="date" id="check_out" name="check_out" class="form-input" value="<%= form.check_out %>" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="guests" class="form-label">Số khách</label>
+          <input type="number" id="guests" name="guests" class="form-input" min="1" max="<%= room.max_guests %>" value="<%= form.guests %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="note" class="form-label">Ghi chú</label>
+          <textarea id="note" name="note" class="form-input form-textarea" rows="4" maxlength="500" placeholder="Ví dụ: muốn nhận phòng sớm"><%= form.note %></textarea>
+        </div>
+
+        <div class="price-preview">
+          <span>Tạm tính</span>
+          <strong id="pricePreview">Chọn ngày để tính giá</strong>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">Xác nhận đặt phòng</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { get, execRaw } = require('../database/init');
+const { get } = require('../database/init');
 const { markVerified, consumeVerifiedFlash } = require('../lib/challenges');
 
 router.get('/member', (req, res) => {
@@ -21,19 +21,9 @@ router.post('/member', (req, res) => {
     });
   }
 
-  const safeHit = get('SELECT id FROM users WHERE member_code = ?', [code]);
+  const hit = get('SELECT id FROM users WHERE member_code = ?', [code]);
 
-  const legacySql = `SELECT id FROM users WHERE member_code = '${code}'`;
-  const { rows, error } = execRaw(legacySql);
-  if (error) console.error('[support/member]', error);
-
-  const legacyHit = rows.length > 0;
-
-  if (legacyHit && !safeHit) {
-    markVerified(req.session, 'member_sql');
-  }
-
-  const result = legacyHit
+  const result = hit
     ? { ok: true, text: 'Mã nhân viên hợp lệ.' }
     : { ok: false, text: 'Mã nhân viên không tồn tại trong hệ thống.' };
 

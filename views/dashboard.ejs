@@ -1,0 +1,99 @@
+<% const pageTitle = 'Dashboard'; %>
+<%- include('partials/header') %>
+
+<section class="dashboard-cover">
+  <div class="container dashboard-cover-inner">
+    <div>
+      <p class="eyebrow">Dashboard</p>
+      <h1>Xin chào, <span><%= user.full_name || user.username %></span></h1>
+      <p>Quản lý booking, xem phòng đề xuất và theo dõi yêu cầu liên hệ trong một nơi.</p>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar"><%= (user.full_name || user.username || 'U').charAt(0).toUpperCase() %></div>
+      <div>
+        <strong><%= user.full_name || user.username %></strong>
+        <small><%= user.role %> · <%= user.email %></small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-light section-tight">
+  <div class="container dashboard-layout">
+    <section class="panel-card main-panel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Bookings</p>
+          <h2><%= user.role === 'admin' ? 'Booking gần đây' : 'Booking của bạn' %></h2>
+        </div>
+        <a href="/rooms" class="btn btn-primary btn-sm">Đặt thêm</a>
+      </div>
+
+      <% if (bookings.length) { %>
+        <div class="booking-stack compact">
+          <% bookings.forEach((booking) => { %>
+            <article class="booking-row">
+              <img src="<%= booking.image %>" alt="<%= booking.room_name %>">
+              <div>
+                <strong><%= booking.room_name %></strong>
+                <p><%= booking.city %> · <%= booking.check_in %> → <%= booking.check_out %></p>
+                <% if (user.role === 'admin') { %><small>Khách: <%= booking.guest_name %></small><% } %>
+              </div>
+              <span class="status-pill status-<%= booking.status %>"><%= booking.status %></span>
+            </article>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="empty-card">
+          <h3>Chưa có booking nào</h3>
+          <p>Chọn một phòng đẹp trước khi lịch trống của bạn tiếp tục nhìn bạn bằng ánh mắt phán xét.</p>
+          <a href="/rooms" class="btn btn-outline">Xem phòng</a>
+        </div>
+      <% } %>
+    </section>
+
+    <aside class="side-stack">
+      <section class="panel-card">
+        <div class="panel-header simple">
+          <div>
+            <p class="eyebrow">Recommended</p>
+            <h2>Gợi ý hôm nay</h2>
+          </div>
+        </div>
+        <div class="mini-room-list">
+          <% recommendedRooms.forEach((room) => { %>
+            <a href="/rooms/<%= room.id %>" class="mini-room">
+              <img src="<%= room.image %>" alt="<%= room.name %>">
+              <span><strong><%= room.name %></strong><small><%= room.city %> · ★ <%= room.rating %></small></span>
+            </a>
+          <% }) %>
+        </div>
+      </section>
+
+      <% if (user.role === 'admin') { %>
+      <section class="panel-card">
+        <div class="panel-header simple">
+          <div>
+            <p class="eyebrow">Messages</p>
+            <h2>Liên hệ gần đây</h2>
+          </div>
+        </div>
+        <% if (recentMessages.length) { %>
+          <div class="message-list compact">
+            <% recentMessages.forEach((message) => { %>
+              <a class="message-item" href="/contact/xem/<%= message.id %>">
+                <strong><%= message.sender_name || 'Khách' %></strong>
+                <p><%= message.body.length > 90 ? message.body.slice(0, 90) + '...' : message.body %></p>
+              </a>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="empty-text">Chưa có liên hệ mới.</p>
+        <% } %>
+      </section>
+      <% } %>
+    </aside>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

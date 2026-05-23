@@ -3,32 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="LuxStay — Cổng nội bộ">
-  <title><%= typeof pageTitle !== 'undefined' && pageTitle ? pageTitle + ' | LuxStay' : 'LuxStay' %></title>
+  <meta name="description" content="LuxStay — đặt phòng nghỉ dưỡng và quản lý lưu trú">
+  <title><%= typeof pageTitle !== 'undefined' && pageTitle ? pageTitle + ' — LuxStay' : 'LuxStay' %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <nav class="navbar" id="navbar">
     <div class="nav-container">
-      <a href="/" class="nav-logo">Lux<span class="logo-accent">Stay</span></a>
+      <a href="<%= user ? '/dashboard' : '/' %>" class="nav-logo" aria-label="LuxStay trang chủ">
+        <span class="logo-mark">L</span>
+        <span>LuxStay</span>
+      </a>
 
-      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <button class="nav-toggle" id="navToggle" aria-label="Mở menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
 
       <div class="nav-menu" id="navMenu">
         <div class="nav-links">
           <a href="/" class="nav-link">Trang chủ</a>
-          <a href="/support/member" class="nav-link">Nhân viên</a>
+          <a href="/rooms" class="nav-link">Phòng</a>
+          <% if (user) { %>
+            <a href="/bookings" class="nav-link">Đặt phòng của tôi</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+          <% } %>
+          <a href="/contact" class="nav-link">Liên hệ</a>
         </div>
 
         <div class="nav-auth">
           <% if (user) { %>
             <span class="nav-user-pill"><%= user.full_name || user.username %></span>
-            <a href="/auth/logout" class="btn btn-outline btn-sm">Đăng xuất</a>
+            <a href="/auth/logout" class="btn btn-ghost btn-sm">Đăng xuất</a>
           <% } else { %>
             <a href="/auth/login" class="btn btn-primary btn-sm">Đăng nhập</a>
           <% } %>
@@ -38,9 +46,16 @@
   </nav>
 
   <% if (typeof success !== 'undefined' && success) { %>
-    <div class="alert alert-success" id="flashMessage">
+    <div class="alert alert-success" id="flashMessage" role="alert">
       <span><%= success %></span>
-      <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+      <button class="alert-close" onclick="this.parentElement.remove()" aria-label="Đóng thông báo">&times;</button>
+    </div>
+  <% } %>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error" id="flashMessage" role="alert">
+      <span><%= error %></span>
+      <button class="alert-close" onclick="this.parentElement.remove()" aria-label="Đóng thông báo">&times;</button>
     </div>
   <% } %>
 

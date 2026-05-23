@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const senderName = (req.body.sender_name || '').trim();
+  const senderName = (req.body.sender_name || '').trim().slice(0, 80);
   const body = (req.body.body || '').trim();
 
   if (!body) {
@@ -18,6 +18,14 @@ router.post('/', (req, res) => {
       verifiedMsg: consumeVerifiedFlash(req.session),
       senderName,
       error: 'Nội dung không được để trống.'
+    });
+  }
+
+  if (body.length > 2000) {
+    return res.render('contact/form', {
+      verifiedMsg: consumeVerifiedFlash(req.session),
+      senderName,
+      error: 'Nội dung tối đa 2000 ký tự.'
     });
   }
 
@@ -30,7 +38,13 @@ router.post('/', (req, res) => {
 });
 
 router.get('/xem/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = Number.parseInt(req.params.id, 10);
+  if (!Number.isInteger(id)) {
+    return res.status(400).render('error', {
+      error: { status: 400, message: 'Mã nội dung không hợp lệ.' }
+    });
+  }
+
   const row = get('SELECT * FROM contact_messages WHERE id = ?', [id]);
 
   if (!row) {

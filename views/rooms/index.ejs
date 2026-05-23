@@ -1,0 +1,69 @@
+<% const pageTitle = 'Danh sách phòng'; %>
+<%- include('../partials/header') %>
+
+<section class="page-hero rooms-hero">
+  <div class="container page-hero-inner">
+    <p class="eyebrow">Rooms</p>
+    <h1 class="page-title">Chọn không gian phù hợp cho chuyến đi.</h1>
+    <p class="page-subtitle">Tìm theo thành phố, số khách và xem chi tiết từng phòng trước khi đặt.</p>
+  </div>
+</section>
+
+<section class="section section-light section-tight">
+  <div class="container">
+    <form class="filter-bar" action="/rooms" method="GET">
+      <label>
+        <span>Thành phố</span>
+        <input type="text" name="city" value="<%= filters.city %>" placeholder="Đà Nẵng, Hà Nội...">
+      </label>
+      <label>
+        <span>Số khách</span>
+        <input type="number" name="guests" min="1" max="8" value="<%= filters.guests %>" placeholder="2">
+      </label>
+      <button class="btn btn-primary" type="submit">Lọc phòng</button>
+      <a href="/rooms" class="btn btn-outline">Xóa lọc</a>
+    </form>
+
+    <% if (rooms.length) { %>
+      <div class="room-grid listing-grid">
+        <% rooms.forEach((room) => { %>
+          <article class="room-card">
+            <a href="/rooms/<%= room.id %>" class="room-image-wrap">
+              <img src="<%= room.image %>" alt="<%= room.name %>" class="room-image">
+              <span class="room-badge"><%= room.city %></span>
+            </a>
+            <div class="room-card-body">
+              <div class="room-title-row">
+                <div>
+                  <p class="room-type"><%= room.type %></p>
+                  <h3><a href="/rooms/<%= room.id %>"><%= room.name %></a></h3>
+                </div>
+                <span class="rating">★ <%= room.rating %></span>
+              </div>
+              <p><%= room.description %></p>
+              <div class="room-facts">
+                <span><%= room.beds %></span>
+                <span>Tối đa <%= room.max_guests %> khách</span>
+              </div>
+              <div class="room-meta">
+                <strong><%= Number(room.price_per_night).toLocaleString('vi-VN') %>đ/đêm</strong>
+              </div>
+              <div class="card-actions two">
+                <a href="/rooms/<%= room.id %>" class="btn btn-outline">Chi tiết</a>
+                <a href="/bookings/new/<%= room.id %>" class="btn btn-primary">Đặt phòng</a>
+              </div>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty-card wide">
+        <h2>Không tìm thấy phòng phù hợp</h2>
+        <p>Thử bỏ bớt điều kiện lọc. Bộ lọc quá kén chọn cũng là một bi kịch nhỏ của thời hiện đại.</p>
+        <a href="/rooms" class="btn btn-primary">Xem tất cả phòng</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

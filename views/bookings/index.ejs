@@ -1,0 +1,68 @@
+<% const pageTitle = 'Booking của tôi'; %>
+<%- include('../partials/header') %>
+
+<section class="page-hero bookings-hero">
+  <div class="container page-hero-inner">
+    <p class="eyebrow">My bookings</p>
+    <h1 class="page-title"><%= user.role === 'admin' ? 'Quản lý booking' : 'Booking của tôi' %></h1>
+    <p class="page-subtitle">Theo dõi lịch lưu trú, trạng thái đặt phòng và hủy booking khi cần.</p>
+  </div>
+</section>
+
+<section class="section section-light section-tight">
+  <div class="container">
+    <div class="panel-header page-actions">
+      <div>
+        <p class="eyebrow">Reservation list</p>
+        <h2>Danh sách đặt phòng</h2>
+      </div>
+      <a href="/rooms" class="btn btn-primary">Đặt phòng mới</a>
+    </div>
+
+    <% if (bookings.length) { %>
+      <div class="booking-stack">
+        <% bookings.forEach((booking) => { %>
+          <article class="booking-card-row panel-card" id="booking-<%= booking.id %>">
+            <img src="<%= booking.image %>" alt="<%= booking.room_name %>">
+            <div class="booking-card-content">
+              <div class="booking-title-row">
+                <div>
+                  <p class="room-type"><%= booking.city %> · <%= booking.type %></p>
+                  <h3><%= booking.room_name %></h3>
+                  <% if (user.role === 'admin') { %><small>Khách: <%= booking.guest_name %></small><% } %>
+                </div>
+                <span class="status-pill status-<%= booking.status %>"><%= booking.status %></span>
+              </div>
+              <div class="booking-info-grid">
+                <span><strong>Nhận phòng</strong><%= booking.check_in %></span>
+                <span><strong>Trả phòng</strong><%= booking.check_out %></span>
+                <span><strong>Số khách</strong><%= booking.guests %></span>
+                <span><strong>Tổng tiền</strong><%= Number(booking.total_price).toLocaleString('vi-VN') %>đ</span>
+              </div>
+              <% if (booking.note) { %>
+                <p class="booking-note"><%= booking.note %></p>
+              <% } %>
+              <div class="booking-actions">
+                <a href="/rooms/<%= booking.room_id %>" class="btn btn-outline btn-sm">Xem phòng</a>
+                <% if (booking.status !== 'cancelled') { %>
+                  <form method="POST" action="/bookings/<%= booking.id %>/cancel" class="inline-form" data-confirm="Bạn chắc muốn hủy booking này?">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn btn-danger btn-sm">Hủy booking</button>
+                  </form>
+                <% } %>
+              </div>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty-card wide">
+        <h2>Chưa có booking nào</h2>
+        <p>Bạn chưa đặt phòng. Một dashboard trống luôn hơi buồn, dù nó vẫn chạy đúng.</p>
+        <a href="/rooms" class="btn btn-primary">Xem danh sách phòng</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

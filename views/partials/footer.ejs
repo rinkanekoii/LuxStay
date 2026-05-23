@@ -2,19 +2,29 @@
 
   <footer class="footer">
     <div class="footer-container">
-      <div class="footer-grid footer-grid--simple">
-        <div class="footer-col">
-          <a href="/" class="footer-logo">Lux<span class="logo-accent">Stay</span></a>
-          <p class="footer-desc">© LuxStay. Cổng thông tin nội bộ.</p>
+      <div class="footer-brand">
+        <a href="/" class="footer-logo"><span class="logo-mark">L</span><span>LuxStay</span></a>
+        <p>Không gian lưu trú boutique cho kỳ nghỉ, công tác và những lần con người quyết định rời khỏi nhà.</p>
+      </div>
+      <div class="footer-columns">
+        <div>
+          <strong>Khám phá</strong>
+          <a href="/rooms">Danh sách phòng</a>
+          <a href="/contact">Liên hệ hỗ trợ</a>
         </div>
-        <div class="footer-col">
-          <h4 class="footer-title">Liên kết</h4>
-          <ul class="footer-links">
-            <li><a href="/">Trang chủ</a></li>
-            <li><a href="/auth/login">Đăng nhập</a></li>
-            <li><a href="/support/member">Xác minh mã NV</a></li>
-            <li><a href="/contact">Liên hệ</a></li>
-          </ul>
+        <div>
+          <strong>Tài khoản</strong>
+          <% if (user) { %>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/bookings">Booking của tôi</a>
+            <a href="/auth/logout">Đăng xuất</a>
+          <% } else { %>
+            <a href="/auth/login">Đăng nhập</a>
+          <% } %>
+        </div>
+        <div>
+          <strong>Nội bộ</strong>
+          <a href="/support/member">Xác minh nhân viên</a>
         </div>
       </div>
     </div>

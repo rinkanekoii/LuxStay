@@ -1,13 +1,15 @@
 <% const pageTitle = 'Lỗi'; %>
 <%- include('partials/header') %>
 
-<section class="section">
-  <div class="container">
-    <div class="error-page">
+<section class="section error-section">
+  <div class="container narrow">
+    <div class="error-page elevated-card">
       <div class="error-code"><%= typeof error !== 'undefined' && error.status ? error.status : 500 %></div>
       <h1 class="error-title">
         <% if (typeof error !== 'undefined' && error.status === 404) { %>
           Trang không tồn tại
+        <% } else if (typeof error !== 'undefined' && error.status === 403) { %>
+          Không được phép
         <% } else { %>
           Đã xảy ra lỗi
         <% } %>
@@ -15,7 +17,7 @@
       <p class="error-message"><%= typeof error !== 'undefined' && error.message ? error.message : 'Vui lòng thử lại sau.' %></p>
       <div class="error-actions">
         <a href="/" class="btn btn-primary">Về trang chủ</a>
-        <a href="/hotels" class="btn btn-outline">Xem khách sạn</a>
+        <a href="/rooms" class="btn btn-outline">Xem phòng</a>
       </div>
     </div>
   </div>

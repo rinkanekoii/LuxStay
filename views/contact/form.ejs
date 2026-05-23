@@ -1,20 +1,23 @@
 <% const pageTitle = 'Liên hệ'; %>
 <%- include('../partials/header') %>
 
-<section class="page-header">
-  <div class="container">
-    <h1 class="page-title">Liên Hệ</h1>
-    <p class="page-subtitle">Gửi yêu cầu tới bộ phận hỗ trợ</p>
+<section class="page-hero contact-hero">
+  <div class="container page-hero-inner">
+    <p class="eyebrow">Support</p>
+    <h1 class="page-title">Liên hệ LuxStay</h1>
+    <p class="page-subtitle">Gửi yêu cầu hỗ trợ về booking, nhận phòng hoặc dịch vụ lưu trú.</p>
   </div>
 </section>
 
-<section class="section">
-  <div class="container" style="max-width:520px">
-    <% if (verifiedMsg) { %>
-      <div class="form-alert form-alert-success" style="margin-bottom:20px"><%= verifiedMsg %></div>
-    <% } %>
+<section class="section section-light section-tight">
+  <div class="container contact-grid">
+    <div class="copy-panel compact-copy">
+      <p class="eyebrow">Guest care</p>
+      <h2>Chúng tôi phản hồi các yêu cầu hợp lệ trong thời gian sớm nhất.</h2>
+      <p>Điền rõ nội dung để đội hỗ trợ không phải đoán ý như một bộ môn huyền học.</p>
+    </div>
 
-    <div class="detail-card">
+    <div class="detail-card elevated-card">
       <% if (typeof error !== 'undefined' && error) { %>
         <div class="form-alert form-alert-error"><%= error %></div>
       <% } %>
@@ -24,13 +27,13 @@
         <div class="form-group">
           <label class="form-label" for="sender_name">Người gửi</label>
           <input type="text" id="sender_name" name="sender_name" class="form-input"
-                 value="<%= senderName %>" autocomplete="name">
+                 value="<%= senderName %>" autocomplete="name" maxlength="80" placeholder="Tên của bạn">
         </div>
         <div class="form-group">
           <label class="form-label" for="body">Nội dung</label>
-          <textarea id="body" name="body" class="form-input form-textarea" rows="5" required></textarea>
+          <textarea id="body" name="body" class="form-input form-textarea" rows="7" maxlength="2000" required placeholder="Bạn cần hỗ trợ điều gì?"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary btn-full">Gửi</button>
+        <button type="submit" class="btn btn-primary btn-full">Gửi yêu cầu</button>
       </form>
     </div>
   </div>
